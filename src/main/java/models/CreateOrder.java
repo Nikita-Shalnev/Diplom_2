@@ -19,11 +19,4 @@ public class CreateOrder {
     public void setIngredients(List<String> ingredients) {
         this.ingredients = ingredients;
     }
-
-    @Override
-    public String toString() {
-        return "CreateOrder{" +
-                "ingredients=" + ingredients +
-                '}';
-    }
 }

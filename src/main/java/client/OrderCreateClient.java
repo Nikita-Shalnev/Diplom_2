@@ -4,10 +4,13 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import models.CreateOrder;
 
+import java.util.List;
+
 import static io.restassured.RestAssured.given;
 
 public class OrderCreateClient {
-    private static final String BASE_PATH = "/api/orders";
+    private static final String ORDERS_PATH = "/api/orders";
+    private static final String INGREDIENTS_PATH = "/api/ingredients";
 
     @Step("Создание заказа с авторизацией")
     public Response createOrderWithToken(CreateOrder order, String token) {
@@ -16,7 +19,7 @@ public class OrderCreateClient {
                 .header("Authorization", token)
                 .body(order)
                 .when()
-                .post(BASE_PATH);
+                .post(ORDERS_PATH);
     }
 
     @Step("Создание заказа без авторизации")
@@ -25,7 +28,7 @@ public class OrderCreateClient {
                 .header("Content-type", "application/json")
                 .body(order)
                 .when()
-                .post(BASE_PATH);
+                .post(ORDERS_PATH);
     }
 
     @Step("Получение списка ингредиентов")
@@ -33,6 +36,6 @@ public class OrderCreateClient {
         return given()
                 .header("Content-type", "application/json")
                 .when()
-                .get("/api/ingredients");
+                .get(INGREDIENTS_PATH);
     }
 }

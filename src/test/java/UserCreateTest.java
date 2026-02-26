@@ -1,8 +1,8 @@
-import client.UserCreateClient;
 import models.CreateUser;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
@@ -18,7 +18,7 @@ public class UserCreateTest extends BaseTest {
         CreateUser user = new CreateUser(randomEmail, DEFAULT_PASSWORD, DEFAULT_NAME);
 
         Response response = userCreateClient.createUser(user);
-        checkStatusCode(response, 200);
+        checkStatusCode(response, HttpStatus.SC_OK);
         checkSuccessTrue(response);
         response.then().body("accessToken", notNullValue());
         response.then().body("refreshToken", notNullValue());
@@ -34,11 +34,11 @@ public class UserCreateTest extends BaseTest {
         CreateUser user = new CreateUser(randomEmail, DEFAULT_PASSWORD, DEFAULT_NAME);
 
         Response response = userCreateClient.createUser(user);
-        checkStatusCode(response, 200);
+        checkStatusCode(response, HttpStatus.SC_OK);
         accessToken = response.path("accessToken");
 
         Response duplicateResponse = userCreateClient.createUser(user);
-        checkStatusCode(duplicateResponse, 403);
+        checkStatusCode(duplicateResponse, HttpStatus.SC_FORBIDDEN);
         checkSuccessFalse(duplicateResponse);
         duplicateResponse.then().body("message", equalTo("User already exists"));
     }
@@ -50,7 +50,7 @@ public class UserCreateTest extends BaseTest {
         CreateUser user = new CreateUser("", DEFAULT_PASSWORD, DEFAULT_NAME);
 
         Response response = userCreateClient.createUser(user);
-        checkStatusCode(response, 403);
+        checkStatusCode(response, HttpStatus.SC_FORBIDDEN);
         checkSuccessFalse(response);
         response.then().body("message", equalTo("Email, password and name are required fields"));
     }
@@ -63,7 +63,7 @@ public class UserCreateTest extends BaseTest {
         CreateUser user = new CreateUser(randomEmail, "", DEFAULT_NAME);
 
         Response response = userCreateClient.createUser(user);
-        checkStatusCode(response, 403);
+        checkStatusCode(response, HttpStatus.SC_FORBIDDEN);
         checkSuccessFalse(response);
         response.then().body("message", equalTo("Email, password and name are required fields"));
     }
@@ -76,7 +76,7 @@ public class UserCreateTest extends BaseTest {
         CreateUser user = new CreateUser(randomEmail, DEFAULT_PASSWORD, "");
 
         Response response = userCreateClient.createUser(user);
-        checkStatusCode(response, 403);
+        checkStatusCode(response, HttpStatus.SC_FORBIDDEN);
         checkSuccessFalse(response);
         response.then().body("message", equalTo("Email, password and name are required fields"));
     }

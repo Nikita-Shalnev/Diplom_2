@@ -3,6 +3,7 @@ import models.UserLogin;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,12 +16,11 @@ public class UserLoginTest extends BaseTest {
 
     @Before
     public void prepareUser() {
-        // создаём пользователя для тестов логина
         randomEmail = "user_" + System.currentTimeMillis() + "@yandex.ru";
         CreateUser user = new CreateUser(randomEmail, DEFAULT_PASSWORD, DEFAULT_NAME);
 
         Response response = userCreateClient.createUser(user);
-        checkStatusCode(response, 200);
+        checkStatusCode(response, HttpStatus.SC_OK);
         checkSuccessTrue(response);
         accessToken = response.path("accessToken");
     }
@@ -32,7 +32,7 @@ public class UserLoginTest extends BaseTest {
         UserLogin loginData = new UserLogin(randomEmail, DEFAULT_PASSWORD);
 
         Response response = userLoginClient.loginUser(loginData);
-        checkStatusCode(response, 200);
+        checkStatusCode(response, HttpStatus.SC_OK);
         checkSuccessTrue(response);
         response.then().body("accessToken", notNullValue());
         response.then().body("refreshToken", notNullValue());
@@ -46,7 +46,7 @@ public class UserLoginTest extends BaseTest {
         UserLogin loginData = new UserLogin(wrongEmail, DEFAULT_PASSWORD);
 
         Response response = userLoginClient.loginUser(loginData);
-        checkStatusCode(response, 401);
+        checkStatusCode(response, HttpStatus.SC_UNAUTHORIZED);
         checkSuccessFalse(response);
         response.then().body("message", equalTo("email or password are incorrect"));
     }
@@ -58,7 +58,7 @@ public class UserLoginTest extends BaseTest {
         UserLogin loginData = new UserLogin(randomEmail, "wrongPassword");
 
         Response response = userLoginClient.loginUser(loginData);
-        checkStatusCode(response, 401);
+        checkStatusCode(response, HttpStatus.SC_UNAUTHORIZED);
         checkSuccessFalse(response);
         response.then().body("message", equalTo("email or password are incorrect"));
     }

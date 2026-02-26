@@ -4,6 +4,7 @@ import client.UserLoginClient;
 import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.After;
 import org.junit.Before;
 
@@ -21,6 +22,7 @@ public class BaseTest {
 
     @Before
     public void setUp() {
+        // ИСПРАВЛЕНО: правильный URL из документации
         RestAssured.baseURI = "https://stellarburgers.education-services.ru";
         userCreateClient = new UserCreateClient();
         userLoginClient = new UserLoginClient();
@@ -29,7 +31,7 @@ public class BaseTest {
 
     @After
     public void tearDown() {
-        if (accessToken != null) {
+        if (accessToken != null && !accessToken.isEmpty()) {
             deleteUser(accessToken);
         }
     }
@@ -51,8 +53,10 @@ public class BaseTest {
 
     @Step("Удаление пользователя")
     public void deleteUser(String token) {
-        userCreateClient.deleteUser(token)
-                .then()
-                .statusCode(202);
+        if (token != null && !token.isEmpty()) {
+            userCreateClient.deleteUser(token)
+                    .then()
+                    .statusCode(HttpStatus.SC_ACCEPTED);
+        }
     }
 }

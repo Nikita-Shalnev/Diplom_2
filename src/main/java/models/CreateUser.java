@@ -37,12 +37,4 @@ public class CreateUser {
     public void setName(String name) {
         this.name = name;
     }
-
-    @Override
-    public String toString() {
-        return "CreateUser{" +
-                "email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
 }
